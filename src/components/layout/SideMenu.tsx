@@ -1,14 +1,14 @@
 import { Modal } from "antd";
 import React, { useState } from "react";
 import { BsTruck } from "react-icons/bs";
-import { CiLogout, CiShoppingBasket } from "react-icons/ci";
+import { CiBoxes, CiLogout, CiShoppingBasket } from "react-icons/ci";
 import { GoPaste, GoPerson } from "react-icons/go";
 import { ImTree } from "react-icons/im";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { PiAddressBookLight, PiSealPercent } from "react-icons/pi";
+import { GiMoneyStack } from "react-icons/gi";
 import { Link, useNavigate } from "react-router-dom";
 import authStore from "../../auth/authStore";
-import { CiBoxes } from "react-icons/ci";
 
 interface ListItemProps {
   IconComponent: React.ElementType;
@@ -92,6 +92,11 @@ const SideMenu: React.FC = () => {
               link: "/orders",
             })}
             {renderListItem({
+              IconComponent: GiMoneyStack,
+              label: "Dettes",
+              link: "/dettes",
+            })}
+            {renderListItem({
               IconComponent: PiAddressBookLight,
               label: "Clientes",
               link: "/clients",
@@ -119,7 +124,7 @@ const SideMenu: React.FC = () => {
 
           <Modal
             title="Confirmer la déconnexion"
-            visible={isModalVisible}
+            open={isModalVisible}
             onOk={handleOk}
             onCancel={handleCancel}
             okText="Oui, Déconnexion"

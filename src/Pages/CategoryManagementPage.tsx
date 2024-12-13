@@ -1,10 +1,10 @@
 import { DeleteOutlined, EditOutlined, FrownOutlined } from "@ant-design/icons";
 import { Button, Modal, message } from "antd";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useGetProductsByCategoryId } from "../hooks/useCategories";
 import { FaPlus } from "react-icons/fa";
+import axiosApi from "../Config/axiosAPI";
+import { useGetProductsByCategoryId } from "../hooks/useCategories";
 
 interface Category {
   id: string;
@@ -21,18 +21,34 @@ const CategoryManagementPage: React.FC = () => {
   const { register, handleSubmit, reset, setValue } = useForm<Category>();
 
   useEffect(() => {
-    axios
-      .get("http://localhost:88/Category")
-      .then((response) => {
+    const fetchCategories = async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+          controller.abort();
+        }, 10000);
+
+        const response = await axiosApi.get("/Category", {
+          signal: controller.signal,
+        });
+
         setListcategories(response.data);
-      })
-      .catch((error) => {
+        clearTimeout(timeoutId); // Clear timeout if the request succeeds
+      } catch (error) {
         console.error(
           "Une erreur s'est produite lors de la récupération des catégories !",
           error
         );
-      });
-  }, [listcategories]);
+      }
+    };
+    fetchCategories(); // Initial fetch
+
+    const interval = setInterval(() => {
+      fetchCategories(); // Repeat fetch every 30 seconds
+    }, 30000);
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []); // Empty dependency array ensures this runs only once
 
   const { products, loading: productsLoading } =
     useGetProductsByCategoryId(selectedCategoryId);
@@ -62,8 +78,8 @@ const CategoryManagementPage: React.FC = () => {
     Modal.confirm({
       title: "Êtes-vous sûr de vouloir supprimer cette catégorie ?",
       onOk: () => {
-        axios
-          .delete(`http://localhost:88/Category/${categoryId}`)
+        axiosApi
+          .delete(`/Category/${categoryId}`)
           .then(() => {
             setListcategories(
               listcategories.filter((c) => c.id !== categoryId)
@@ -84,8 +100,8 @@ const CategoryManagementPage: React.FC = () => {
   };
 
   const onCreateSubmit = (data: Category) => {
-    axios
-      .post("http://localhost:88/Category", data)
+    axiosApi
+      .post("/Category", data)
       .then((response) => {
         setListcategories([...listcategories, response.data]);
         message.success("Catégorie ajoutée avec succès !");
@@ -104,8 +120,8 @@ const CategoryManagementPage: React.FC = () => {
 
   const onUpdateSubmit = (data: Category) => {
     if (currentCategory) {
-      axios
-        .put(`http://localhost:88/Category/${currentCategory.id}`, data)
+      axiosApi
+        .put(`/Category/${currentCategory.id}`, data)
         .then((response) => {
           setListcategories(
             listcategories.map((c) =>

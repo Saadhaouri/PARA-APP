@@ -1,11 +1,10 @@
-import { Modal, message, Select } from "antd";
-import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import { SubmitHandler } from "react-hook-form";
-import DataTable from "../components/DataTable";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, useForm } from "react-hook-form";
+import { message, Modal, Select } from "antd";
+import { useEffect, useRef, useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
+import DataTable from "../components/DataTable";
+import axiosApi from "../Config/axiosAPI";
 import {
   createOrder,
   deleteOrder,
@@ -87,8 +86,19 @@ const OrderManagementPage = () => {
   });
 
   useEffect(() => {
-    axios
-      .get("http://localhost:88/Order")
+    const fetchClients = () => {
+      axiosApi
+        .get("/Client")
+        .then((response) => {
+          setClientList(response.data);
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the clients!", error);
+        });
+    };
+
+    axiosApi
+      .get("/Order")
       .then((response) => {
         setOrderList(response.data);
       })
@@ -96,8 +106,8 @@ const OrderManagementPage = () => {
         console.error("There was an error fetching the orders!", error);
       });
 
-    axios
-      .get("http://localhost:88/Supplier")
+    axiosApi
+      .get("/Supplier")
       .then((response) => {
         setSupplierList(response.data);
       })
@@ -105,24 +115,25 @@ const OrderManagementPage = () => {
         console.error("There was an error fetching the suppliers!", error);
       });
 
-    axios
-      .get("http://localhost:88/Client")
-      .then((response) => {
-        setClientList(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the clients!", error);
-      });
-
-    axios
-      .get("http://localhost:88/Product")
+    axiosApi
+      .get("/Product")
       .then((response) => {
         setProductList(response.data);
       })
       .catch((error) => {
         console.error("There was an error fetching the products!", error);
       });
-  }, [orderList]);
+
+    // Fetch clients initially
+    fetchClients();
+
+    // Set interval to fetch clients every 30 seconds
+    const interval = setInterval(() => {
+      fetchClients();
+    }, 30000);
+
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, []);
 
   const handleCreateOrder: SubmitHandler<Order> = async (data) => {
     const formattedData = {

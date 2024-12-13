@@ -22,7 +22,7 @@ const ForgotPasswordPage: React.FC = () => {
 
     try {
       await axios.post(
-        "http://localhost:88/Account/generatepasswordresettoken",
+        "http://localhost:5133/Account/generatepasswordresettoken",
         form
       );
       message.success("Password reset email sent successfully");

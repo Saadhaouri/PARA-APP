@@ -26,7 +26,7 @@
 //   const onSubmit = async (data: FormData) => {
 //     try {
 //       // Make an HTTP POST request to your API endpoint
-//       const response = await axios.post("http://localhost:88/Product", data);
+//       const response = await axios.post("http://localhost:5133/Product", data);
 //       // console.log("Product added successfully:", response.data);l
 //       // You can add further actions, like resetting the form or showing a success message
 //     } catch (error) {

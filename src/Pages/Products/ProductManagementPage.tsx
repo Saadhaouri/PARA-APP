@@ -15,17 +15,19 @@ import { FaPlus } from "react-icons/fa";
 import Supplier from "../../Types/Supplier";
 
 const productSchema = yup.object({
+  qrCode: yup.string().required("Le barecode est requis"),
   name: yup.string().required("Le nom est requis"),
   description: yup.string().required("La description est requise"),
   price: yup.number().required("Le prix est requis"),
   priceForSale: yup.number().required("Le prix de vente est requis"),
   quantity: yup.number().required("La quantité est requise"),
   categoryID: yup.string().required("La catégorie est requise"),
-  supplierId: yup.string().required("La catégorie est requise"),
+  supplierId: yup.string().required("Le fournisseur est requis"),
   dateExp: yup.string().required("La date d'expiration est requise"),
 });
 
 type ProductBase = {
+  qrCode: string; // Required
   name: string;
   description: string;
   price: number;
@@ -34,7 +36,6 @@ type ProductBase = {
   categoryID: string;
   supplierId: string;
   dateExp: string;
-  // Include other properties if necessary
 };
 
 type Product = ProductBase & {
@@ -71,6 +72,7 @@ const ProductManagementPage = () => {
     reset,
   } = useForm<Product>({
     defaultValues: {
+      qrCode: "", // Added qrCode field
       name: "",
       description: "",
       price: 0,
@@ -87,9 +89,9 @@ const ProductManagementPage = () => {
       try {
         const [productsResponse, categoriesResponse, supplierResponse] =
           await Promise.all([
-            axios.get("http://localhost:88/Product"),
-            axios.get("http://localhost:88/Category"),
-            axios.get("http://localhost:88/Supplier"),
+            axios.get("http://localhost:5133/Product"),
+            axios.get("http://localhost:5133/Category"),
+            axios.get("http://localhost:5133/Supplier"),
           ]);
         setProductList(productsResponse.data);
         setCategories(categoriesResponse.data);
@@ -112,7 +114,7 @@ const ProductManagementPage = () => {
       message.success("Produit ajouté avec succès");
       reset();
       // Refresh the product list after adding a product
-      const productsResponse = await axios.get("http://localhost:88/Product");
+      const productsResponse = await axios.get("http://localhost:5133/Product");
       setProductList(productsResponse.data);
     } catch (error) {
       message.error("Erreur lors de l'ajout du produit");
@@ -126,7 +128,7 @@ const ProductManagementPage = () => {
       setIsModalVisible(false);
       message.success("produit mis à jour avec succès");
       // Refresh the product list after updating a product
-      const productsResponse = await axios.get("http://localhost:88/Product");
+      const productsResponse = await axios.get("http://localhost:5133/Product");
       setProductList(productsResponse.data);
     } catch (error) {
       message.error("Erreur lors de la mise à jour du produit");
@@ -135,11 +137,12 @@ const ProductManagementPage = () => {
   };
 
   const handleDeleteProduct = async (productId: string) => {
+    console.log(productId);
     try {
       await deleteProduct(productId);
       message.success("Product supprimé avec succès");
       // Refresh the product list after deleting a product
-      const productsResponse = await axios.get("http://localhost:88/Product");
+      const productsResponse = await axios.get("http://localhost:5133/Product");
       setProductList(productsResponse.data);
     } catch (error) {
       message.error("Erreur lors de la suppression du produit");
@@ -161,6 +164,7 @@ const ProductManagementPage = () => {
   const showModal = () => {
     setIsEdit(false);
     reset({
+      qrCode: "", // Added qrCode field
       name: "",
       description: "",
       price: 0,
@@ -168,6 +172,7 @@ const ProductManagementPage = () => {
       quantity: 0,
       dateExp: new Date().toISOString().split("T")[0],
       categoryID: "",
+      supplierId: "", // Ensure supplierId is also included if needed
     });
     setIsModalVisible(true);
   };
@@ -201,6 +206,13 @@ const ProductManagementPage = () => {
     {
       accessorKey: "name",
       header: "Nom",
+      cell: ({ cell }: { cell: TableCellProps }) => (
+        <span>{cell.getValue()}</span>
+      ),
+    },
+    {
+      accessorKey: "qrCode",
+      header: "Bare code",
       cell: ({ cell }: { cell: TableCellProps }) => (
         <span>{cell.getValue()}</span>
       ),
@@ -315,7 +327,7 @@ const ProductManagementPage = () => {
           columns={columns}
           data={productList}
           onUpdate={(row) => showEditModal(row.original)}
-          onDelete={confirmDelete}
+          onDelete={(row) => confirmDelete(row.original.productID)}
         />
       </div>
       <Modal
@@ -333,6 +345,31 @@ const ProductManagementPage = () => {
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
           ref={formRef}
         >
+          {/* QR Code Input Field */}
+          <Controller
+            name="qrCode"
+            control={control}
+            render={({ field }) => (
+              <div className="flex flex-col space-y-2 col-span-1">
+                <label
+                  htmlFor="qrCode"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Barecode
+                </label>
+                <input
+                  {...field}
+                  placeholder="Bare Code"
+                  className="border border-gray-300 p-2 rounded-md focus:border-blue-500"
+                />
+                {errors.qrCode && (
+                  <p className="text-red-500 text-sm">
+                    {errors.qrCode.message}
+                  </p>
+                )}
+              </div>
+            )}
+          />
           <Controller
             name="name"
             control={control}

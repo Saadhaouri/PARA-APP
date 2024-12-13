@@ -47,9 +47,9 @@ const OrderTest = () => {
     const fetchData = async () => {
       try {
         const [suppliers, clients, products] = await Promise.all([
-          axios.get("http://localhost:88/Supplier"),
-          axios.get("http://localhost:88/Client"),
-          axios.get("http://localhost:88/Product"),
+          axios.get("http://localhost:5133/Supplier"),
+          axios.get("http://localhost:5133/Client"),
+          axios.get("http://localhost:5133/Product"),
         ]);
         setSupplierList(suppliers.data);
         setClientList(clients.data);

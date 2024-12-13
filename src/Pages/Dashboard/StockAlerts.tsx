@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Product from "../../Types/ProductType";
-const API_URL = "http://localhost:88/Product";
+const API_URL = "http://localhost:5133/Product";
 
 export const getAllProducts = async () => {
   const response = await axios.get(API_URL);

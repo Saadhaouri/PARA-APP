@@ -18,6 +18,7 @@ import LoginPage from "./Pages/LoginPage";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import authStore from "./auth/authStore";
 import ForgotPasswordPage from "./Pages/ForgotPasswordPage";
+import DebtManagementPage from "./Pages/DebtManagementPage";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -62,6 +63,10 @@ function App() {
                   element={
                     <ProtectedRoute element={<SupplierManagementPage />} />
                   }
+                />
+                <Route
+                  path="/dettes"
+                  element={<ProtectedRoute element={<DebtManagementPage />} />}
                 />
                 <Route
                   path="/categories"

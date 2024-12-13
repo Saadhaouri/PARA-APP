@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -8,6 +8,8 @@ import { changePassword } from "../Services/userService";
 import useUser from "../hooks/useUser";
 import { FaUserLock } from "react-icons/fa";
 import StockAlerts from "./Dashboard/StockAlerts";
+import { BsDatabaseUp } from "react-icons/bs";
+import axiosApi from "../Config/axiosAPI";
 
 // Define the interface for the form data
 interface FormData {
@@ -39,6 +41,8 @@ const validationSchema = yup.object({
 const UserManagement: React.FC = () => {
   const { userAuth, loading, error } = useUser();
   const [modalVisible, setModalVisible] = useState(false);
+  const [isBackingUp, setIsBackingUp] = useState(false);
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   const {
     register,
@@ -57,6 +61,14 @@ const UserManagement: React.FC = () => {
     setModalVisible(false);
   };
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000); // Update every second
+
+    return () => clearInterval(timer); // Cleanup on component unmount
+  }, []);
+
   const onSubmit = async (formData: FormData) => {
     try {
       const changePasswordData: ChangePasswordData = {
@@ -68,12 +80,24 @@ const UserManagement: React.FC = () => {
       const response: ChangePasswordResponse = await changePassword(
         changePasswordData
       );
-      // console.log("Password changed successfully:", response);
       message.success(response.message);
       reset();
       setModalVisible(false);
     } catch (error) {
       console.error("Error changing password:", error);
+    }
+  };
+
+  const backupDatabase = async () => {
+    setIsBackingUp(true);
+    try {
+      const response = await axiosApi.get("/Database/backup");
+      message.success("Database backup successful: " + response.data);
+    } catch (error) {
+      console.error("Error during database backup:", error);
+      message.error("Error during database backup.");
+    } finally {
+      setIsBackingUp(false);
     }
   };
 
@@ -96,12 +120,10 @@ const UserManagement: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="grid grid-cols-10 gap-8">
-        {/* Left Sidebar */}
         <div className="col-span-3 bg-white rounded-lg shadow-md overflow-hidden">
           <StockAlerts />
         </div>
 
-        {/* Main Content */}
         <div className="col-span-7 space-y-8">
           <div className="flex flex-col bg-white rounded-lg shadow-md overflow-hidden">
             <div className="relative bg-indigo-600 rounded-t-lg overflow-hidden">
@@ -124,7 +146,7 @@ const UserManagement: React.FC = () => {
                     User Information
                   </h2>
                   <button
-                    className="p-3  text-black bg-gray-100 rounded-full "
+                    className="p-3 text-black bg-gray-100 rounded-full"
                     onClick={showModal}
                   >
                     <FaUserLock />
@@ -149,57 +171,92 @@ const UserManagement: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              {/* Top selling products */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-bold mb-4 text-gray-800">
+                Exportation des Données
+              </h2>
+              <p className="mb-4 text-gray-600">
+                Cliquez sur le bouton ci-dessous pour exporter les données de
+                votre base de données.
+              </p>
+              <div className="flex justify-end">
+                <Button
+                  className="p-2 flex items-center  bg-emerald-500 text-white rounded hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  onClick={backupDatabase}
+                  loading={isBackingUp}
+                >
+                  <BsDatabaseUp className="text-xl mr-2" />
+                  Exporter les Données
+                </Button>
+              </div>
             </div>
+            <Modal
+              title="Change Password"
+              open={modalVisible}
+              onCancel={handleCancel}
+              footer={null}
+            >
+              <div className="p-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  mode passe actuel
+                </label>
+                <input
+                  type="password"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-indigo-500"
+                  {...register("currentPassword")}
+                />
+                {errors.currentPassword && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.currentPassword.message}
+                  </p>
+                )}
 
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <Modal
-                title="Change Password"
-                visible={modalVisible}
-                onCancel={handleCancel}
-                footer={null}
-              >
-                <div className="p-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    mode passe actuel
-                  </label>
-                  <input
-                    type="password"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-indigo-500"
-                    {...register("currentPassword")}
-                  />
-                  {errors.currentPassword && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.currentPassword.message}
-                    </p>
-                  )}
+                <label className="block text-sm font-medium text-gray-700 mt-4 mb-2">
+                  nouveau mot de passe
+                </label>
+                <input
+                  type="password"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-indigo-500"
+                  {...register("newPassword")}
+                />
+                {errors.newPassword && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.newPassword.message}
+                  </p>
+                )}
 
-                  <label className="block text-sm font-medium text-gray-700 mt-4 mb-2">
-                    nouveau mot de passe
-                  </label>
-                  <input
-                    type="password"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-indigo-500"
-                    {...register("newPassword")}
-                  />
-                  {errors.newPassword && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.newPassword.message}
-                    </p>
-                  )}
-
-                  <div className="mt-4">
-                    <Button
-                      type="primary"
-                      onClick={handleSubmit(onSubmit)}
-                      className="w-full"
-                    >
-                      Change Password
-                    </Button>
-                  </div>
+                <div className="mt-4">
+                  <Button
+                    type="primary"
+                    onClick={handleSubmit(onSubmit)}
+                    className="w-full"
+                  >
+                    Change Password
+                  </Button>
                 </div>
-              </Modal>
+              </div>
+            </Modal>
+            <div className="bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg shadow-md p-6 text-center">
+              <h2 className="text-white text-lg font-semibold mb-2">
+                Date et Heure Actuelles
+              </h2>
+              <div className="bg-white rounded-md shadow p-4">
+                <p className="text-gray-800 text-2xl font-bold mb-1">
+                  {currentDateTime.toLocaleTimeString("fr-FR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })}
+                </p>
+                <p className="text-gray-600 text-lg">
+                  {currentDateTime.toLocaleDateString("fr-FR", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import useUser from "../../hooks/useUser";
-import { GiCottonFlower } from "react-icons/gi";
+import logopara from "../../assets/logopara.png";
 
 const Header: React.FC = () => {
   const { userAuth, loading, error } = useUser();
@@ -15,9 +15,9 @@ const Header: React.FC = () => {
     <div className="w-full top-0 flex flex-row items-center justify-between bg-white p-2 border-b border-gray-300">
       {/* Logo */}
       <div className="flex justify-center items-center">
-        <GiCottonFlower className="text-[36px] text-emerald-500 mr-2" />
+        <img src={logopara} alt="" width={40} height={40} />
         <strong className="text-emerald-500 text-lg font-semibold">
-          YOUSMALA
+          Para Semlali
         </strong>
       </div>
 

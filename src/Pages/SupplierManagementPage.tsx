@@ -53,23 +53,33 @@ const SupplierManagementPage = () => {
   });
 
   useEffect(() => {
-    axios
-      .get("http://localhost:88/Supplier")
-      .then((response) => {
-        setSupplierList(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the suppliers!", error);
-      });
-  }, [supplierList]);
+    const fetchSuppliers = () => {
+      axios
+        .get("http://localhost:5133/Supplier")
+        .then((response) => {
+          setSupplierList(response.data);
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the suppliers!", error);
+        });
+    };
+
+    fetchSuppliers();
+
+    const interval = setInterval(() => {
+      fetchSuppliers();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCreateSupplier: SubmitHandler<Supplier> = async (data, e) => {
     try {
       await createSupplier(data);
-      setIsModalVisible(false); // Close the modal upon successful creation
+      setIsModalVisible(false);
       message.success("Fournisseur ajouté avec succès");
-      reset(); // Reset the form fields
-      e?.target.reset(); // Reset the form fields
+      reset();
+      e?.target.reset();
     } catch (error) {
       message.error("Erreur lors de l'ajout du fournisseur");
       console.error("Failed to create supplier:", error);

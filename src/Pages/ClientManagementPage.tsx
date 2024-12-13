@@ -64,14 +64,24 @@ const ClientManagementPage = () => {
   });
 
   useEffect(() => {
-    getClients()
-      .then((response) => {
-        setClientList(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the clients!", error);
-      });
-  }, [clientList]);
+    const fetchClients = () => {
+      getClients()
+        .then((response) => {
+          setClientList(response.data);
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the clients!", error);
+        });
+    };
+
+    fetchClients(); // Initial fetch
+
+    const interval = setInterval(() => {
+      fetchClients(); // Repeat fetch every 30 seconds
+    }, 30000);
+
+    return () => clearInterval(interval); // Cleanup on component unmount
+  }, []);
 
   const handleCreateClient: SubmitHandler<CreateClient> = async (data) => {
     try {

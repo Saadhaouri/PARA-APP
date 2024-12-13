@@ -13,7 +13,7 @@ const fetchUserData = async (userId: string) => {
     throw new Error("Token not found");
   }
 
-  const response = await axios.get(`http://localhost:88/User/${userId}`, {
+  const response = await axios.get(`http://localhost:5133/User/${userId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",

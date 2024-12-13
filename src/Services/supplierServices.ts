@@ -1,4 +1,5 @@
-import axios from "axios";
+import axiosApi from "../Config/axiosAPI"; // Import the configured axios instance
+
 type SupplierBase = {
   name: string;
   contactPerson: string;
@@ -11,20 +12,20 @@ type Supplier = SupplierBase & {
   supplierId: string;
 };
 
-const API_URL = "http://localhost:88/Supplier";
+const API_URL = "/Supplier"; // Base URL is already handled in axiosApi
 
 export const getAllSuppliers = async () => {
-  const response = await axios.get(API_URL);
+  const response = await axiosApi.get(API_URL); // Using axiosApi instead of axios
   return response.data;
 };
 
 export const getSupplierById = async (supplierId: string) => {
-  const response = await axios.get(`${API_URL}/${supplierId}`);
+  const response = await axiosApi.get(`${API_URL}/${supplierId}`); // Using axiosApi for the request
   return response.data;
 };
 
 export const createSupplier = async (supplier: Supplier) => {
-  const response = await axios.post(API_URL, supplier);
+  const response = await axiosApi.post(API_URL, supplier); // Using axiosApi for the POST request
   return response.data;
 };
 
@@ -32,9 +33,9 @@ export const updateSupplier = async (
   supplierId: string,
   supplier: Supplier
 ) => {
-  await axios.put(`${API_URL}/${supplierId}`, supplier);
+  await axiosApi.put(`${API_URL}/${supplierId}`, supplier); // Using axiosApi for the PUT request
 };
 
 export const deleteSupplier = async (supplierId: string) => {
-  await axios.delete(`${API_URL}/${supplierId}`);
+  await axiosApi.delete(`${API_URL}/${supplierId}`); // Using axiosApi for the DELETE request
 };

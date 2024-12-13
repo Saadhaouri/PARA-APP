@@ -16,7 +16,7 @@ const MonthlyBenefitsChart = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:88/Sales/monthly-benefits")
+      .get("http://localhost:5133/Sales/monthly-benefits")
       .then((response) => setMonthlydata(response.data))
       .catch((error) => console.error("Error fetching data:", error));
     // console.log(monthlydata);

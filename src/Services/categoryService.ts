@@ -1,32 +1,34 @@
-import axios from "axios";
-import { Category } from "../Types/CategoryType";
+import axiosApi from '../Config/axiosAPI';
+import { Category } from '../Types/CategoryType';
 
-const API_URL = "http://localhost:88/Category";
+const API_URL = '/Category';
 
 export const getAllCategories = async () => {
-  const response = await axios.get(API_URL);
+  const response = await axiosApi.get(API_URL);
   return response.data;
 };
 
 export const getCategoryById = async (id: string) => {
-  const response = await axios.get(`${API_URL}/${id}`);
+  const response = await axiosApi.get(`${API_URL}/${id}`);
   return response.data;
 };
 
 export const createCategory = async (category: Category) => {
-  const response = await axios.post(API_URL, category);
+  const response = await axiosApi.post(API_URL, category);
   return response.data;
 };
 
 export const updateCategory = async (id: string, category: Category) => {
-  await axios.put(`${API_URL}/${id}`, category);
+  const response = await axiosApi.put(`${API_URL}/${id}`, category);
+  return response.data;
 };
 
 export const deleteCategory = async (id: string) => {
-  await axios.delete(`${API_URL}/${id}`);
+  const response = await axiosApi.delete(`${API_URL}/${id}`);
+  return response.data;
 };
 
 export const getProductsByCategoryId = async (categoryId: string) => {
-  const response = await axios.get(`${API_URL}/${categoryId}/products`);
+  const response = await axiosApi.get(`${API_URL}/${categoryId}/products`);
   return response.data;
 };

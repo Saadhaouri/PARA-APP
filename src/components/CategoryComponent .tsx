@@ -25,7 +25,7 @@ const CategoryComponent: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:88/Category")
+      .get("http://localhost:5133/Category")
       .then((response) => {
         setListCategories(response.data);
       })
@@ -67,7 +67,7 @@ const CategoryComponent: React.FC = () => {
       title: "Êtes-vous sûr de vouloir supprimer cette catégorie ?",
       onOk: () => {
         axios
-          .delete(`http://localhost:88/Category/${categoryId}`)
+          .delete(`http://localhost:5133/Category/${categoryId}`)
           .then(() => {
             setListCategories(
               listCategories.filter((c) => c.id !== categoryId)
@@ -89,7 +89,7 @@ const CategoryComponent: React.FC = () => {
 
   const onCreateSubmit = (data: Category) => {
     axios
-      .post("http://localhost:88/Category", data)
+      .post("http://localhost:5133/Category", data)
       .then((response) => {
         setListCategories([...listCategories, response.data]);
         message.success("Catégorie créée avec succès !");
@@ -109,7 +109,7 @@ const CategoryComponent: React.FC = () => {
   const onUpdateSubmit = (data: Category) => {
     if (currentCategory) {
       axios
-        .put(`http://localhost:88/Category/${currentCategory.id}`, data)
+        .put(`http://localhost:5133/Category/${currentCategory.id}`, data)
         .then((response) => {
           setListCategories(
             listCategories.map((c) =>

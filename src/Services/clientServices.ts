@@ -1,22 +1,26 @@
 // Services/clientServices.ts
 
-import axios from "axios";
+import axiosApi from "../Config/axiosAPI";
 import { Client, CreateClient } from "../Types/ClientType";
 
-const API_URL = "http://localhost:88/Client";
+const API_URL = "/Client"; // Base URL already configured in axiosApi
 
 export const createClient = (data: CreateClient) => {
-  return axios.post(API_URL, data);
+  return axiosApi.post(API_URL, data);
 };
 
 export const updateClient = (clientId: string, data: Client) => {
-  return axios.put(`${API_URL}/${clientId}`, data);
+  return axiosApi.put(`${API_URL}/${clientId}`, data);
 };
 
 export const deleteClient = (clientId: string) => {
-  return axios.delete(`${API_URL}/${clientId}`);
+  return axiosApi.delete(`${API_URL}/${clientId}`);
 };
 
 export const getClients = () => {
-  return axios.get(API_URL);
+  return axiosApi.get(API_URL);
+};
+
+export const getClientById = (clientId: string) => {
+  return axiosApi.get(`${API_URL}/${clientId}`);
 };

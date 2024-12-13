@@ -27,6 +27,7 @@ import { AddSale } from "../Types/SaleTypes";
 interface Product {
   productID: string;
   name: string;
+  qrCode: string;
 }
 
 interface Sale {
@@ -106,9 +107,19 @@ const SalesComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchSalesData();
-    fetchProfitData();
-    fetchProducts();
+    const fetchAllData = () => {
+      fetchSalesData();
+      fetchProfitData();
+      fetchProducts();
+    };
+
+    fetchAllData();
+
+    const interval = setInterval(() => {
+      fetchAllData();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const onSubmit = async (data: AddSale) => {
@@ -219,7 +230,7 @@ const SalesComponent: React.FC = () => {
                   onChange={(value) => field.onChange(value)}
                   options={products.map((product) => ({
                     value: product.productID,
-                    label: product.name,
+                    label: product.qrCode,
                   }))}
                   value={field.value || ""}
                   className="w-full border"
@@ -384,7 +395,7 @@ const SalesComponent: React.FC = () => {
       </div>
 
       <div className="p-4" style={{ maxHeight: "400px", overflowY: "auto" }}>
-        <h2 className="text-lg font-bold mb-2">Toutes les ventes</h2>
+        <h2 className="text-lg font-bold mb-2 mt-4">Toutes les ventes</h2>
         <Table
           columns={columns}
           dataSource={allSales}

@@ -14,7 +14,7 @@ const ChartComponent = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:88/Sales/monthly-benefits"
+          "http://localhost:5133/Sales/monthly-benefits"
         );
         setData(response.data);
       } catch (error) {

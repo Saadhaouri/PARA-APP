@@ -1,7 +1,6 @@
-import axios from "axios";
+import axiosApi from "../Config/axiosAPI"; // Import the configured axios instance
 
-const API_URL_ChangePassword =
-  "http://localhost:88/Account/changepassword";
+const API_URL_ChangePassword = "/Account/changepassword"; // Use relative URL with axiosApi
 
 interface ChangePassword {
   userId: string;
@@ -11,7 +10,10 @@ interface ChangePassword {
 
 export const changePassword = async (changePassword: ChangePassword) => {
   try {
-    const response = await axios.post(API_URL_ChangePassword, changePassword);
+    const response = await axiosApi.post(
+      API_URL_ChangePassword,
+      changePassword
+    ); // Use axiosApi for the POST request
     return response.data;
   } catch (error) {
     // Handle error responses from the API

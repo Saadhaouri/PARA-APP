@@ -1,10 +1,9 @@
-import axios from "axios";
+import { Spin } from "antd";
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { message, Spin } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import logopara from "../assets/logopara.png";
 import authStore from "../auth/authStore";
-import useUser from "../hooks/useUser";
-import { GiCottonFlower } from "react-icons/gi";
+import axiosApi from "../Config/axiosAPI";
 
 interface LoginForm {
   usernameOrEmail: string;
@@ -16,7 +15,7 @@ const LoginPage: React.FC = () => {
   // const isAuthenticated = authStore((state) => state.isAuth);
   const LogUser = authStore((state) => state.logIn);
   const navigate = useNavigate();
-  const { userAuth } = useUser();
+  // const { userAuth } = useUser();
   const [loginForm, setLoginForm] = useState<LoginForm>({
     usernameOrEmail: "",
     password: "",
@@ -38,10 +37,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setLoading(true); // Start loading
     try {
-      const response = await axios.post(
-        "http://localhost:88/Account/login",
-        loginForm
-      );
+      const response = await axiosApi.post("/Account/login", loginForm);
 
       // console.log("Connexion réussie !", response.data);
       localStorage.setItem("token", response.data.token);
@@ -54,9 +50,6 @@ const LoginPage: React.FC = () => {
 
       LogUser();
       navigate("/");
-      message.success(
-        "Bienvenue " + userAuth.firstName + " " + userAuth.lastName
-      );
     } catch (error) {
       console.error("Échec de la connexion :", error);
       setErrorMessage("Nom d'utilisateur ou mot de passe incorrect");
@@ -72,10 +65,10 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center w-full bg-gradient-to-r from-pink-400 to-emerald-300">
       <div className="bg-white shadow-md rounded-lg px-8 py-6 max-w-md">
-      <div className="flex justify-center items-center">
-          <GiCottonFlower className="text-[36px] text-emerald-500 mr-2" />
+        <div className="flex justify-center items-center">
+          <img src={logopara} alt="" width={40} height={40} />
           <strong className="text-emerald-500 text-lg font-semibold">
-            YOUSMALA
+            Para Semlali
           </strong>
         </div>
         <form onSubmit={handleLogin}>

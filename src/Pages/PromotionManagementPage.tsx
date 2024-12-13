@@ -1,8 +1,9 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Modal, Select, message } from "antd";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { FaPlus } from "react-icons/fa";
+import axiosApi from "../Config/axiosAPI";
 import {
   createPromotion,
   deletePromotion,
@@ -10,7 +11,6 @@ import {
   updatePromotion,
 } from "../Services/promotionServices";
 import Product from "../Types/ProductType";
-import { FaPlus } from "react-icons/fa";
 
 interface Promotion {
   promotionID: string;
@@ -55,7 +55,7 @@ const PromotionManagementPage = () => {
   useEffect(() => {
     const fetchPromotions = async () => {
       try {
-        const response = await axios.get("http://localhost:88/Promotion");
+        const response = await axiosApi.get("/Promotion");
         setPromotionList(response.data);
       } catch (error) {
         console.error("Error fetching promotions:", error);
@@ -63,7 +63,7 @@ const PromotionManagementPage = () => {
     };
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:88/Product");
+        const response = await axiosApi.get("/Product");
         setProductList(response.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -72,6 +72,8 @@ const PromotionManagementPage = () => {
     fetchPromotions();
     fetchProducts();
   }, []);
+
+  console.log("this is product list : ", productList);
 
   const handleCreatePromotion: SubmitHandler<Promotion> = async (data) => {
     try {
@@ -288,7 +290,7 @@ const PromotionManagementPage = () => {
 
       <Modal
         title={isEdit ? "Modifier Promotion" : "Ajouter Promotion"}
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
       >

@@ -11,7 +11,7 @@ interface Product {
   dateExp: string;
 }
 
-const apiUrl = "http://localhost:88/Product";
+const apiUrl = "http://localhost:5133/Product";
 
 export const useGetAllProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
