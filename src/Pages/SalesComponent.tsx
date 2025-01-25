@@ -83,7 +83,6 @@ const SalesComponent: React.FC = () => {
       message.error("Failed to fetch sales data");
     }
   };
-
   const fetchProfitData = async () => {
     try {
       const dailyProfit = await getTotalDailyProfit();
@@ -145,6 +144,14 @@ const SalesComponent: React.FC = () => {
       message.error("Échec de la suppression des ventes");
     }
   };
+
+  const calculateTotalPrice = (products: Sale[]): number => {
+    return products.reduce((total, product) => total + product.price, 0);
+  };
+
+  const totalCapitalbyday = calculateTotalPrice(dailySales);
+  const totalCapitalbyweek = calculateTotalPrice(dailySales);
+  const totalCapitalbymonth = calculateTotalPrice(dailySales);
 
   const getProductWithMostSales = () => {
     const allSales = [...dailySales, ...weeklySales, ...monthlySales];
@@ -230,7 +237,7 @@ const SalesComponent: React.FC = () => {
                   onChange={(value) => field.onChange(value)}
                   options={products.map((product) => ({
                     value: product.productID,
-                    label: product.qrCode,
+                    label: product.name,
                   }))}
                   value={field.value || ""}
                   className="w-full border"
@@ -321,6 +328,9 @@ const SalesComponent: React.FC = () => {
               <h2 className="text-1xl font-semibold mt-1">
                 Bénéfices: {dailyProfit} DH
               </h2>
+              <h2 className="text-1xl font-semibold mt-1">
+                Capital: {totalCapitalbyday} DH
+              </h2>
             </div>
           </div>
           <div className="flex items-center">
@@ -336,6 +346,9 @@ const SalesComponent: React.FC = () => {
               <h2 className="text-1xl font-semibold mt-1">
                 Bénéfices: {weeklyProfit} DH
               </h2>
+              <h2 className="text-1xl font-semibold mt-1">
+                Capital: {totalCapitalbyweek} DH
+              </h2>
             </div>
           </div>
           <div className="flex items-center">
@@ -350,6 +363,9 @@ const SalesComponent: React.FC = () => {
               <h1 className="text-4xl font-extrabold">{monthlySales.length}</h1>
               <h2 className="text-1xl font-semibold mt-1">
                 Bénéfices: {monthlyProfit} DH
+              </h2>
+              <h2 className="text-1xl font-semibold mt-1">
+                Bénéfices: {totalCapitalbymonth} DH
               </h2>
             </div>
           </div>

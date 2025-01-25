@@ -56,6 +56,9 @@ const formatDateForInput = (date: string) => {
   const year = d.getFullYear();
   return `${year}-${month}-${day}`;
 };
+interface TotalValueData {
+  totalValue: number;
+}
 
 const ProductManagementPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -64,6 +67,9 @@ const ProductManagementPage = () => {
   const [productList, setProductList] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [supplierList, setSupplierlist] = useState<Supplier[]>([]);
+  const [Totalvaluemoney, setTotalvaluemoney] = useState<TotalValueData | null>(
+    null
+  );
 
   const {
     control,
@@ -87,15 +93,23 @@ const ProductManagementPage = () => {
   useEffect(() => {
     const fetchProductsAndCategories = async () => {
       try {
-        const [productsResponse, categoriesResponse, supplierResponse] =
-          await Promise.all([
-            axios.get("http://localhost:5133/Product"),
-            axios.get("http://localhost:5133/Category"),
-            axios.get("http://localhost:5133/Supplier"),
-          ]);
+        const [
+          productsResponse,
+          categoriesResponse,
+          supplierResponse,
+          totalMoneyResponse,
+        ] = await Promise.all([
+          axios.get("http://localhost:5133/Product"),
+          axios.get("http://localhost:5133/Category"),
+          axios.get("http://localhost:5133/Supplier"),
+          axios.get<TotalValueData>(
+            "http://localhost:5133/Product/total-value"
+          ),
+        ]);
         setProductList(productsResponse.data);
         setCategories(categoriesResponse.data);
         setSupplierlist(supplierResponse.data);
+        setTotalvaluemoney(totalMoneyResponse.data); // Ensure this contains an object like { totalValue: <value> }
       } catch (error) {
         console.error(
           "There was an error fetching the products or categories!",
@@ -267,9 +281,9 @@ const ProductManagementPage = () => {
     (sum, product) => sum + product.quantity,
     0
   );
-  const highQuantityProducts = productList.filter(
-    (product) => product.quantity > 60
-  ).length;
+  // const highQuantityProducts = productList.filter(
+  //   (product) => product.quantity > 60
+  // ).length;
   const highPriceProducts = productList.filter(
     (product) => product.price > 100
   ).length;
@@ -307,12 +321,12 @@ const ProductManagementPage = () => {
             {totalQuantity}
           </p>
         </div>
-        <div className="p-4 bg-gradient-to-r from-yellow-500 to-yellow-300 rounded shadow-md">
+        <div className="p-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-md shadow-md">
           <h2 className="text-lg font-semibold text-white">
-            Produits en quantité élevé
+            Total du capital en stock{" "}
           </h2>
           <p className="text-2xl text-white font-bold flex justify-center">
-            {highQuantityProducts}
+            {Totalvaluemoney?.totalValue} DH
           </p>
         </div>
         <div className="p-4 bg-gradient-to-r from-red-600 to-red-400 rounded shadow-md">

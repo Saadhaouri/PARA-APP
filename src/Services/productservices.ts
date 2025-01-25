@@ -38,6 +38,11 @@ export const deleteProduct = async (id: string) => {
 
 // Additional methods for sales, purchases, and stock management
 
+export const getTotalValueOfProducts = async () => {
+  const response = await axiosApi.get(`${API_URL}/total-value`);
+  return response.data;
+};
+
 export const sellProduct = async (productId: string, quantity: number) => {
   await axiosApi.post(`${API_URL}/${productId}/sell`, { quantity });
 };
