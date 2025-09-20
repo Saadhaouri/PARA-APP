@@ -11,7 +11,7 @@ import {
 } from "../../Services/productservices";
 import { Category } from "../../Types/CategoryType";
 import DataTable from "../../components/DataTable";
-import { FaPlus } from "react-icons/fa";
+import { FaMoneyBill, FaPlus } from "react-icons/fa";
 import Supplier from "../../Types/Supplier";
 
 const productSchema = yup.object({
@@ -63,6 +63,7 @@ interface TotalValueData {
 const ProductManagementPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [hidecapital, setHidecapital] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const [productList, setProductList] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -304,6 +305,13 @@ const ProductManagementPage = () => {
             <FaPlus className="mr-2" />
             Ajouter un produit
           </button>
+          <button
+            onClick={() => setHidecapital(true)}
+            className="px-4 py-2 ml-2 flex items-center min-w-[120px] text-center text-white bg-yellow-400 border-yellow-600 shadow-xl hover:shadow rounded active:text-white-500 focus:ring"
+          >
+            <FaMoneyBill className="mr-2" />
+            capital
+          </button>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mr-4 ml-4 mb-3">
@@ -321,14 +329,7 @@ const ProductManagementPage = () => {
             {totalQuantity}
           </p>
         </div>
-        <div className="p-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-md shadow-md">
-          <h2 className="text-lg font-semibold text-white">
-            Total du capital en stock{" "}
-          </h2>
-          <p className="text-2xl text-white font-bold flex justify-center">
-            {Totalvaluemoney?.totalValue} DH
-          </p>
-        </div>
+
         <div className="p-4 bg-gradient-to-r from-red-600 to-red-400 rounded shadow-md">
           <h2 className="text-lg font-semibold text-white">Produits chers</h2>
           <p className="text-2xl text-white font-bold flex justify-center">
@@ -592,6 +593,22 @@ const ProductManagementPage = () => {
           />
           {/* Add other form fields as necessary */}
         </form>
+      </Modal>
+
+      <Modal
+        title="Basic Modal"
+        open={hidecapital}
+        onOk={() => setHidecapital(false)}
+        onCancel={() => setHidecapital(true)}
+      >
+        <div className="p-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-md shadow-md">
+          <h2 className="text-lg font-semibold text-white">
+            Total du capital en stock{" "}
+          </h2>
+          <p className="text-2xl text-white font-bold flex justify-center">
+            {Totalvaluemoney?.totalValue} DH
+          </p>
+        </div>
       </Modal>
     </div>
   );

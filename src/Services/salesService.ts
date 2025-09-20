@@ -1,71 +1,89 @@
-import axiosApi from "../Config/axiosAPI"; // Import the configured axios instance
+import axiosApi from "../Config/axiosAPI"; // Import de l'instance configurée d'axios
 import { AddSale } from "../Types/SaleTypes";
 
-const API_URL = "/Sales"; // Base URL is already handled in axiosApi
-const API_URL_Product = "/Product"; // Base URL is already handled in axiosApi
+const API_URL = "/Sales"; // L'URL de base est déjà gérée dans axiosApi
+const API_URL_Product = "/Product";
 
-export const getDailySales = async () => {
-  const response = await axiosApi.get(`${API_URL}/daily-sales`); // Using axiosApi instead of axios
-  return response.data;
-};
+// Récupération des ventes
+export const getDailySales = async () =>
+  (await axiosApi.get(`${API_URL}/daily-sales`)).data;
+export const getWeeklySales = async () =>
+  (await axiosApi.get(`${API_URL}/weekly-sales`)).data;
+export const getMonthlySales = async () =>
+  (await axiosApi.get(`${API_URL}/monthly-sales`)).data;
 
-export const getWeeklySales = async () => {
-  const response = await axiosApi.get(`${API_URL}/weekly-sales`); // Using axiosApi for the request
-  return response.data;
-};
-
-export const getMonthlySales = async () => {
-  const response = await axiosApi.get(`${API_URL}/monthly-sales`); // Using axiosApi for the request
-  return response.data;
-};
-
+// Ajout d'une vente
 export const addSale = async (saleData: AddSale) => {
   try {
-    const response = await axiosApi.post(`${API_URL}`, saleData); // Using axiosApi for the POST request
-    return response.data;
+    return (await axiosApi.post(`${API_URL}`, saleData)).data;
   } catch (error) {
-    console.error("There was an error adding the sale!", error);
+    console.error("Erreur lors de l'ajout de la vente!", error);
     throw error;
   }
 };
 
-export const getAllProducts = async () => {
-  const response = await axiosApi.get(API_URL_Product); // Using axiosApi for the request
-  return response.data;
-};
+// Récupération des produits
+export const getAllProducts = async () =>
+  (await axiosApi.get(API_URL_Product)).data;
 
-export const getTotalDailyProfit = async () => {
-  const response = await axiosApi.get(`${API_URL}/total-daily-profit`); // Using axiosApi for the request
-  return response.data.totalDailyProfit; // Assuming the API returns { totalDailyProfit: value }
-};
+// Récupération du profit total
+export const getTotalDailyProfit = async () =>
+  (await axiosApi.get(`${API_URL}/total-daily-profit`)).data.totalDailyProfit;
+export const getTotalWeeklyProfit = async () =>
+  (await axiosApi.get(`${API_URL}/total-weekly-profit`)).data.totalWeeklyProfit;
+export const getTotalMonthlyProfit = async () =>
+  (await axiosApi.get(`${API_URL}/total-monthly-profit`)).data
+    .totalMonthlyProfit;
 
-export const getTotalWeeklyProfit = async () => {
-  const response = await axiosApi.get(`${API_URL}/total-weekly-profit`); // Using axiosApi for the request
-  return response.data.totalWeeklyProfit; // Assuming the API returns { totalWeeklyProfit: value }
-};
+// Récupération du capital total
+export const getTotalDailyCapital = async () =>
+  (await axiosApi.get(`${API_URL}/total-daily-capital`)).data.totalDailyCapital;
+export const getTotalWeeklyCapital = async () =>
+  (await axiosApi.get(`${API_URL}/total-weekly-capital`)).data
+    .totalWeeklyCapital;
+export const getTotalMonthlyCapital = async () =>
+  (await axiosApi.get(`${API_URL}/total-monthly-capital`)).data
+    .totalMonthlyCapital;
 
-export const getTotalMonthlyProfit = async () => {
-  const response = await axiosApi.get(`${API_URL}/total-monthly-profit`); // Using axiosApi for the request
-  return response.data.totalMonthlyProfit; // Assuming the API returns { totalMonthlyProfit: value }
-};
-
-// Add the new methods below
+// Suppression de toutes les ventes
 export const deleteAllSales = async () => {
   try {
-    const response = await axiosApi.delete(`${API_URL}/delete-all-sales`); // Using axiosApi for the DELETE request
-    return response.data;
+    return (await axiosApi.delete(`${API_URL}/delete-all-sales`)).data;
   } catch (error) {
-    console.error("There was an error deleting all sales!", error);
+    console.error("Erreur lors de la suppression de toutes les ventes!", error);
     throw error;
   }
 };
 
+// Récupération de toutes les ventes
 export const getAllSales = async () => {
   try {
-    const response = await axiosApi.get(`${API_URL}/all-sales`); // Using axiosApi for the GET request
-    return response.data;
+    return (await axiosApi.get(`${API_URL}/all-sales`)).data;
   } catch (error) {
-    console.error("There was an error retrieving all sales!", error);
+    console.error(
+      "Erreur lors de la récupération de toutes les ventes!",
+      error
+    );
+    throw error;
+  }
+};
+
+// Récupération du capital et des bénéfices
+export const getCapitalAndBenefits = async (
+  year: number,
+  month?: number | null
+) => {
+  try {
+    return (
+      await axiosApi.get(`${API_URL}/capital-benefits`, {
+        params: { year, month },
+      })
+    ).data;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération du capital et des bénéfices!",
+      error
+    );
     throw error;
   }
 };

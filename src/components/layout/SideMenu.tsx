@@ -101,10 +101,16 @@ const SideMenu: React.FC = () => {
               label: "Clientes",
               link: "/clients",
             })}
+            .
             {renderListItem({
               IconComponent: PiSealPercent,
               label: "Promotions",
               link: "/promotions",
+            })}
+            {renderListItem({
+              IconComponent: GiMoneyStack, // You can use a different icon if you like
+              label: "Calcul Mensuels",
+              link: "/monthly-benefits",
             })}
             {renderListItem({
               IconComponent: GoPerson,

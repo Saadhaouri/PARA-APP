@@ -73,8 +73,6 @@ const PromotionManagementPage = () => {
     fetchProducts();
   }, []);
 
-  console.log("this is product list : ", productList);
-
   const handleCreatePromotion: SubmitHandler<Promotion> = async (data) => {
     try {
       await createPromotion(data);

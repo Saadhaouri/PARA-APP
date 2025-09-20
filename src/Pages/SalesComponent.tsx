@@ -21,6 +21,9 @@ import {
   getTotalMonthlyProfit,
   getTotalWeeklyProfit,
   getWeeklySales,
+  getTotalDailyCapital,
+  getTotalWeeklyCapital,
+  getTotalMonthlyCapital,
 } from "../Services/salesService";
 import { AddSale } from "../Types/SaleTypes";
 
@@ -50,6 +53,24 @@ const SalesComponent: React.FC = () => {
   const [dailyProfit, setDailyProfit] = useState(0);
   const [weeklyProfit, setWeeklyProfit] = useState(0);
   const [monthlyProfit, setMonthlyProfit] = useState(0);
+  const [dailyCapital, setDailyCapital] = useState<number | null>(null);
+  const [weeklyCapital, setWeeklyCapital] = useState<number | null>(null);
+  const [monthlyCapital, setMonthlyCapital] = useState<number | null>(null);
+
+  const fetchData = async () => {
+    try {
+      const [daily, weekly, monthly] = await Promise.all([
+        getTotalDailyCapital(),
+        getTotalWeeklyCapital(),
+        getTotalMonthlyCapital(),
+      ]);
+      setDailyCapital(daily);
+      setWeeklyCapital(weekly);
+      setMonthlyCapital(monthly);
+    } catch (error) {
+      console.error("Error fetching capital data:", error);
+    }
+  };
 
   const schema = yup.object().shape({
     productID: yup.string().required("Product ID is required"),
@@ -110,6 +131,7 @@ const SalesComponent: React.FC = () => {
       fetchSalesData();
       fetchProfitData();
       fetchProducts();
+      fetchData();
     };
 
     fetchAllData();
@@ -144,14 +166,6 @@ const SalesComponent: React.FC = () => {
       message.error("Échec de la suppression des ventes");
     }
   };
-
-  const calculateTotalPrice = (products: Sale[]): number => {
-    return products.reduce((total, product) => total + product.price, 0);
-  };
-
-  const totalCapitalbyday = calculateTotalPrice(dailySales);
-  const totalCapitalbyweek = calculateTotalPrice(dailySales);
-  const totalCapitalbymonth = calculateTotalPrice(dailySales);
 
   const getProductWithMostSales = () => {
     const allSales = [...dailySales, ...weeklySales, ...monthlySales];
@@ -329,7 +343,7 @@ const SalesComponent: React.FC = () => {
                 Bénéfices: {dailyProfit} DH
               </h2>
               <h2 className="text-1xl font-semibold mt-1">
-                Capital: {totalCapitalbyday} DH
+                Capital: {dailyCapital} DH
               </h2>
             </div>
           </div>
@@ -347,7 +361,7 @@ const SalesComponent: React.FC = () => {
                 Bénéfices: {weeklyProfit} DH
               </h2>
               <h2 className="text-1xl font-semibold mt-1">
-                Capital: {totalCapitalbyweek} DH
+                Capital: {weeklyCapital} DH
               </h2>
             </div>
           </div>
@@ -365,7 +379,7 @@ const SalesComponent: React.FC = () => {
                 Bénéfices: {monthlyProfit} DH
               </h2>
               <h2 className="text-1xl font-semibold mt-1">
-                Bénéfices: {totalCapitalbymonth} DH
+                Capital : {monthlyCapital} DH
               </h2>
             </div>
           </div>
