@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
   element: React.ReactNode;
 }
 
-const ProtectedRoute = ({ element }: ProtectedRouteProps) => {
+const   ProtectedRoute = ({ element }: ProtectedRouteProps) => {
   const isAuth = authStore((state) => state.isAuth);
 
   return isAuth ? <>{element}</> : <Navigate to="/login" />;
